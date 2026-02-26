@@ -17,7 +17,7 @@ var update = flag.Bool("update", false, "regenerate golden test images")
 const (
 	goldenWidth    = 200
 	goldenHeight   = 150
-	goldenDir      = "testdata"
+	goldenDir      = "../../testdata"
 	goldenFilename = "golden_render.png"
 
 	goldenMountainsWidth    = 400
