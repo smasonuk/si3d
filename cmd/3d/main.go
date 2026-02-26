@@ -5,7 +5,7 @@ import (
 	"log"
 	"math"
 
-	"github.com/smasonuk/gosie3d"
+	"github.com/smasonuk/si3d/pkg/si3d"
 )
 
 const (
@@ -15,7 +15,7 @@ const (
 
 func main() {
 	// Create the mountains heightmap
-	mountains := gosie3d.NewSubdividedPlaneHeightMapPerlin(
+	mountains := si3d.NewSubdividedPlaneHeightMapPerlin(
 		10000, 10000,
 		color.RGBA{R: 153, G: 196, B: 210, A: 255},
 		35, 800, 800, 42,
@@ -23,7 +23,7 @@ func main() {
 	mountains.SetDrawLinesOnly(true)
 
 	// Create camera
-	cam := gosie3d.NewCamera(0, 0, 0, 0, 0, 0)
+	cam := si3d.NewCamera(0, 0, 0, 0, 0, 0)
 
 	cameraAngle := 0.0
 	cameraHeight := -200.0
@@ -34,14 +34,14 @@ func main() {
 
 	cam.SetCameraPosition(camX, cameraHeight, camZ)
 	cam.LookAt(
-		gosie3d.NewVector3(0, -100, 0),
-		gosie3d.NewVector3(0, -1, 0),
+		si3d.NewVector3(0, -100, 0),
+		si3d.NewVector3(0, -1, 0),
 	)
 
 	// Build the world
-	world := gosie3d.NewWorld3d()
+	world := si3d.NewWorld3d()
 	world.AddCamera(cam, cam.GetPosition().X, cam.GetPosition().Y, cam.GetPosition().Z)
-	world.AddObjectDrawFirst(&gosie3d.Entity{Model: mountains, X: 0, Y: 0, Z: 0})
+	world.AddObjectDrawFirst(&si3d.Entity{Model: mountains, X: 0, Y: 0, Z: 0})
 
 	// Render to file
 	bgColor := color.RGBA{R: 10, G: 10, B: 30, A: 255}
