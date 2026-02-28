@@ -45,7 +45,7 @@ func main() {
 
 	// Render to file
 	bgColor := color.RGBA{R: 10, G: 10, B: 30, A: 255}
-	err := world.RenderToFile(WIDTH, HEIGHT, bgColor, "output.png")
+	err := world.RenderToFile(WIDTH, HEIGHT, bgColor, "output2.png")
 	if err != nil {
 		log.Fatal(err)
 	}
