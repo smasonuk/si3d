@@ -23,14 +23,24 @@ type polygonCommand struct {
 	hasFill   bool
 }
 
-type PolygonBatcher struct {
+// PolygonBatcher is the interface for polygon batch renderers.
+type PolygonBatcher interface {
+	AddPolygon(xp, yp []float32, clr color.RGBA)
+	AddPolygonOutline(xp, yp []float32, strokeWidth float32, clr color.RGBA)
+	AddPolygonAndOutline(xp, yp []float32, fillClr, strokeClr color.RGBA, strokeWidth float32)
+	Draw(target *image.RGBA)
+	ClipPolygon(subjectPolygon []Point, screenWidth, screenHeight float32) []Point
+}
+
+// DefaultBatcher is the software-rasteriser implementation of PolygonBatcher.
+type DefaultBatcher struct {
 	commands []polygonCommand
 	clipBufA []Point
 	clipBufB []Point
 }
 
-func NewPolygonBatcher(initialCap int) *PolygonBatcher {
-	return &PolygonBatcher{
+func NewDefaultBatcher(initialCap int) *DefaultBatcher {
+	return &DefaultBatcher{
 		commands: make([]polygonCommand, 0, initialCap),
 		clipBufA: make([]Point, 0, 20),
 		clipBufB: make([]Point, 0, 20),
@@ -38,7 +48,7 @@ func NewPolygonBatcher(initialCap int) *PolygonBatcher {
 }
 
 // AddPolygon adds a single polygon's geometry to the batch.
-func (b *PolygonBatcher) AddPolygon(xp, yp []float32, clr color.RGBA) {
+func (b *DefaultBatcher) AddPolygon(xp, yp []float32, clr color.RGBA) {
 	if len(xp) < 3 {
 		return
 	}
@@ -52,7 +62,7 @@ func (b *PolygonBatcher) AddPolygon(xp, yp []float32, clr color.RGBA) {
 	b.commands = append(b.commands, cmd)
 }
 
-func (b *PolygonBatcher) AddPolygonOutline(xp, yp []float32, strokeWidth float32, clr color.RGBA) {
+func (b *DefaultBatcher) AddPolygonOutline(xp, yp []float32, strokeWidth float32, clr color.RGBA) {
 	if len(xp) < 2 {
 		return
 	}
@@ -68,7 +78,7 @@ func (b *PolygonBatcher) AddPolygonOutline(xp, yp []float32, strokeWidth float32
 }
 
 // AddPolygonWithOutline adds a filled polygon and its outline to the batch.
-func (b *PolygonBatcher) AddPolygonAndOutline(xp, yp []float32, fillClr, strokeClr color.RGBA, strokeWidth float32) {
+func (b *DefaultBatcher) AddPolygonAndOutline(xp, yp []float32, fillClr, strokeClr color.RGBA, strokeWidth float32) {
 	if len(xp) < 3 {
 		return // Need at least 3 vertices for a polygon.
 	}
@@ -86,7 +96,7 @@ func (b *PolygonBatcher) AddPolygonAndOutline(xp, yp []float32, fillClr, strokeC
 }
 
 // Draw sends the entire batch of polygons to be drawn on the target image.
-func (b *PolygonBatcher) Draw(target *image.RGBA) {
+func (b *DefaultBatcher) Draw(target *image.RGBA) {
 	if len(b.commands) == 0 {
 		return
 	}
@@ -125,8 +135,8 @@ func (b *PolygonBatcher) Draw(target *image.RGBA) {
 	b.commands = b.commands[:0]
 }
 
-// clipPolygon applies the Sutherland-Hodgman algorithm to clip a polygon against the screen boundaries.
-func (b *PolygonBatcher) clipPolygon(subjectPolygon []Point, screenWidth, screenHeight float32) []Point {
+// ClipPolygon applies the Sutherland-Hodgman algorithm to clip a polygon against the screen boundaries.
+func (b *DefaultBatcher) ClipPolygon(subjectPolygon []Point, screenWidth, screenHeight float32) []Point {
 	// a bit of a hack so the edges of the new polygon are not exactly on the screen edges.
 	screenWidth = screenWidth + 1
 	screenHeight = screenHeight + 1
@@ -160,7 +170,7 @@ func (b *PolygonBatcher) clipPolygon(subjectPolygon []Point, screenWidth, screen
 }
 
 // clipAgainstEdge clips a polygon against a single arbitrary edge.
-func (b *PolygonBatcher) clipAgainstEdge(subjectPolygon []Point, outputBuffer []Point, inside func(Point) bool, intersection func(Point, Point) Point) []Point {
+func (b *DefaultBatcher) clipAgainstEdge(subjectPolygon []Point, outputBuffer []Point, inside func(Point) bool, intersection func(Point, Point) Point) []Point {
 	if len(subjectPolygon) == 0 {
 		return subjectPolygon
 	}

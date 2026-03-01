@@ -45,12 +45,12 @@ func (b *BspNode) SetColor(r, g, b1, a uint8) {
 }
 
 // PaintWithoutShading paints the BSP tree without lighting effects.
-func (b *BspNode) PaintWithoutShading(batcher *PolygonBatcher, x, y int, transPoints []Vector3, transNormals []Vector3, linesOnly bool, screenWidth, screenHeight float32, dontDrawOutlines bool, nearPlane float64, ctx *RenderContext) {
+func (b *BspNode) PaintWithoutShading(batcher PolygonBatcher, x, y int, transPoints []Vector3, transNormals []Vector3, linesOnly bool, screenWidth, screenHeight float32, dontDrawOutlines bool, nearPlane float64, ctx *RenderContext) {
 	b.PaintWithShading(batcher, x, y, transPoints, transNormals, false, linesOnly, screenWidth, screenHeight, dontDrawOutlines, nearPlane, ctx)
 }
 
 // PaintWithShading recursively traverses the BSP tree and paints the polygons.
-func (b *BspNode) PaintWithShading(batcher *PolygonBatcher, x, y int, transPoints []Vector3, transNormals []Vector3, doShading bool, linesOnly bool, screenWidth, screenHeight float32, dontDrawOutlines bool, nearPlane float64, ctx *RenderContext) {
+func (b *BspNode) PaintWithShading(batcher PolygonBatcher, x, y int, transPoints []Vector3, transNormals []Vector3, doShading bool, linesOnly bool, screenWidth, screenHeight float32, dontDrawOutlines bool, nearPlane float64, ctx *RenderContext) {
 	if len(b.facePointIndices) == 0 {
 		return
 	}
@@ -138,7 +138,7 @@ func intersectNearPlane(p1, p2 Vector3, nearPlane float64) Vector3 {
 
 // paintPoly handles Z-clipping, screen-space clipping, and drawing of a single polygon.
 func (b *BspNode) paintPoly(
-	batcher *PolygonBatcher,
+	batcher PolygonBatcher,
 	x, y int,
 	verticesInCameraSpace []Vector3,
 	normalsInCameraSpace []Vector3,
@@ -176,7 +176,7 @@ func (b *BspNode) paintPoly(
 		})
 	}
 
-	clippedPoints := batcher.clipPolygon(ctx.BufferPoints, screenWidth, screenHeight)
+	clippedPoints := batcher.ClipPolygon(ctx.BufferPoints, screenWidth, screenHeight)
 
 	if len(clippedPoints) < 3 {
 		return false

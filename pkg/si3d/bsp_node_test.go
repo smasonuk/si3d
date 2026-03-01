@@ -111,7 +111,7 @@ func TestClipPolygon(t *testing.T) {
 	width := float32(100)
 	height := float32(100)
 
-	batcher := NewPolygonBatcher(1)
+	batcher := NewDefaultBatcher(1)
 
 	// Square inside screen
 	poly1 := []Point{
@@ -121,7 +121,7 @@ func TestClipPolygon(t *testing.T) {
 		{10, 90},
 	}
 
-	clipped1 := batcher.clipPolygon(poly1, width, height)
+	clipped1 := batcher.ClipPolygon(poly1, width, height)
 	if len(clipped1) != 4 {
 		t.Errorf("Expected clipped1 to have 4 points, got %d", len(clipped1))
 	}
@@ -135,7 +135,7 @@ func TestClipPolygon(t *testing.T) {
 	}
 
 	// Should be clipped to screen rect (4 corners)
-	clipped2 := batcher.clipPolygon(poly2, width, height)
+	clipped2 := batcher.ClipPolygon(poly2, width, height)
 	if len(clipped2) != 4 {
 		t.Errorf("Expected clipped2 to have 4 points, got %d", len(clipped2))
 	}
@@ -149,7 +149,7 @@ func TestClipPolygon(t *testing.T) {
 		{50, 150}, // Outside bottom
 	}
 
-	clipped3 := batcher.clipPolygon(poly3, width, height)
+	clipped3 := batcher.ClipPolygon(poly3, width, height)
 	// Should result in a polygon with more vertices potentially, but at least clipped.
 	// 50,50 is in.
 	// 150,50 is out. Clip against right edge. Intersection at 100,50.

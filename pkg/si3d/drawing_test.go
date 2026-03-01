@@ -5,18 +5,18 @@ import (
 	"testing"
 )
 
-func TestNewPolygonBatcher(t *testing.T) {
-	pb := NewPolygonBatcher(100)
+func TestNewDefaultBatcher(t *testing.T) {
+	pb := NewDefaultBatcher(100)
 	if pb == nil {
-		t.Fatal("NewPolygonBatcher returned nil")
+		t.Fatal("NewDefaultBatcher returned nil")
 	}
 	if cap(pb.commands) != 100 {
-		t.Errorf("NewPolygonBatcher initial capacity expected 100, got %d", cap(pb.commands))
+		t.Errorf("NewDefaultBatcher initial capacity expected 100, got %d", cap(pb.commands))
 	}
 }
 
 func TestPolygonBatcher_AddPolygon(t *testing.T) {
-	pb := NewPolygonBatcher(10)
+	pb := NewDefaultBatcher(10)
 	xp := []float32{1, 2, 3}
 	yp := []float32{4, 5, 6}
 	col := color.RGBA{255, 0, 0, 255}
@@ -40,7 +40,7 @@ func TestPolygonBatcher_AddPolygon(t *testing.T) {
 }
 
 func TestPolygonBatcher_AddPolygonOutline(t *testing.T) {
-	pb := NewPolygonBatcher(10)
+	pb := NewDefaultBatcher(10)
 	xp := []float32{1, 2, 3}
 	yp := []float32{4, 5, 6}
 	col := color.RGBA{0, 255, 0, 255}
@@ -68,7 +68,7 @@ func TestPolygonBatcher_AddPolygonOutline(t *testing.T) {
 }
 
 func TestPolygonBatcher_AddPolygonAndOutline(t *testing.T) {
-	pb := NewPolygonBatcher(10)
+	pb := NewDefaultBatcher(10)
 	xp := []float32{1, 2, 3}
 	yp := []float32{4, 5, 6}
 	fillCol := color.RGBA{0, 0, 255, 255}

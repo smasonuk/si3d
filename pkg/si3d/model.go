@@ -48,7 +48,7 @@ func (o *Model) GetDrawLinesOnly() bool {
 	return o.drawLinesOnly
 }
 
-func (o *Model) PaintObject(batcher *PolygonBatcher, x, y int, lightingChange bool, screenWidth, screenHeight float32, nearPlane float64, ctx *RenderContext) {
+func (o *Model) PaintObject(batcher PolygonBatcher, x, y int, lightingChange bool, screenWidth, screenHeight float32, nearPlane float64, ctx *RenderContext) {
 	if o.canPaintWithoutBSP {
 		o.paintWithoutBSP(batcher, x, y, screenHeight, screenWidth, nearPlane, ctx)
 
@@ -452,7 +452,7 @@ func (o *Model) GetTransFaceMesh() *FaceMesh {
 	return o.transFaceMesh
 }
 
-func (o *Model) paintWithoutBSP(batcher *PolygonBatcher, x, y int, screenHeight, screenWidth float32, nearPlane float64, ctx *RenderContext) {
+func (o *Model) paintWithoutBSP(batcher PolygonBatcher, x, y int, screenHeight, screenWidth float32, nearPlane float64, ctx *RenderContext) {
 	for i := 0; i < len(o.faceIndices); i++ {
 		faceIndices := o.faceIndices[i]
 		normalIndex := o.normalIndices[i]
@@ -517,7 +517,7 @@ func (o *Model) BspNodesIntersectingLine(startLine, endLine Vector3) *BspNode {
 	return closestNode
 }
 
-func (o *Model) paintFace(batcher *PolygonBatcher, x, y int, points []Vector3, normal Vector3, screenWidth, screenHeight float32, face *Face, nearPlane float64, ctx *RenderContext) {
+func (o *Model) paintFace(batcher PolygonBatcher, x, y int, points []Vector3, normal Vector3, screenWidth, screenHeight float32, face *Face, nearPlane float64, ctx *RenderContext) {
 
 	firstPoint := points[0]
 	where := 1.0
@@ -545,7 +545,7 @@ func (o *Model) paintFace(batcher *PolygonBatcher, x, y int, points []Vector3, n
 }
 
 func (o *Model) paintFace2(
-	batcher *PolygonBatcher,
+	batcher PolygonBatcher,
 	x, y int,
 	firstTransformedPoint Vector3,
 	initial3DPoints []Vector3,
@@ -575,7 +575,7 @@ func (o *Model) paintFace2(
 	}
 
 	// clip to screen
-	clippedPoints := batcher.clipPolygon(ctx.BufferPoints, screenWidth, screenHeight)
+	clippedPoints := batcher.ClipPolygon(ctx.BufferPoints, screenWidth, screenHeight)
 	if len(clippedPoints) < 3 {
 		return false
 	}

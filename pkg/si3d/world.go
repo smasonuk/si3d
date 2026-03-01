@@ -36,14 +36,14 @@ type World struct {
 	entitiesDrawFirst []*Entity
 	// draw last
 	entitiesDrawLast []*Entity
-	batcher          *PolygonBatcher
+	batcher          PolygonBatcher
 	ctx              *RenderContext
 }
 
 func NewWorld3d() *World {
 	return &World{
 		currentCamera: -1,
-		batcher:       NewPolygonBatcher(5000),
+		batcher:       NewDefaultBatcher(5000),
 		ctx:           NewRenderContext(),
 	}
 }
@@ -62,13 +62,17 @@ func (w *World) AddObjectDrawLast(e *Entity) {
 	w.entitiesDrawLast = append(w.entitiesDrawLast, e)
 }
 
+func (w *World) SetPolygonBatcher(b PolygonBatcher) {
+	w.batcher = b
+}
+
 func (w *World) AddCamera(c *Camera, x, y, z float64) {
 	c.SetCameraPosition(x, y, z)
 	w.cameras = append(w.cameras, c)
 	w.currentCamera = len(w.cameras) - 1
 }
 
-func paint(batcher *PolygonBatcher, xsize, ysize int, e *Entity, cam *Camera, ctx *RenderContext) {
+func paint(batcher PolygonBatcher, xsize, ysize int, e *Entity, cam *Camera, ctx *RenderContext) {
 	objToWorld := TransMatrix(e.X, e.Y, e.Z)
 
 	objToCam := cam.camMatrixRev.MultiplyBy(objToWorld)
@@ -84,7 +88,7 @@ func distBetweenEntityAndCamera(e *Entity, cam *Camera) float64 {
 	return (objX-camX)*(objX-camX) + (objY-camY)*(objY-camY) + (objZ-camZ)*(objZ-camZ)
 }
 
-func draw(batcher *PolygonBatcher, xsize, ysize int, entities []*Entity, cam *Camera, ctx *RenderContext) {
+func draw(batcher PolygonBatcher, xsize, ysize int, entities []*Entity, cam *Camera, ctx *RenderContext) {
 	// draw background objects
 	for _, e := range entities {
 		objToWorld := TransMatrix(
