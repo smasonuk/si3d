@@ -601,7 +601,8 @@ func (o *Model) paintFace2(
 	}
 
 	if !o.drawLinesOnly {
-		black := color.RGBA{R: 50, G: 50, B: 50, A: 25}
+		// black := color.RGBA{R: 50, G: 50, B: 50, A: 25}
+		black := color.RGBA{R: 0, G: 0, B: 0, A: 25}
 		batcher.AddPolygonAndOutline(finalScreenPointsX, finalScreenPointsY, polyColor, black, 1.0)
 
 	} else {
