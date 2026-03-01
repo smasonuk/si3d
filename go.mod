@@ -1,6 +1,6 @@
 module github.com/smasonuk/si3d
 
-go 1.23.4
+go 1.24.0
 
 require (
 	github.com/aquilax/go-perlin v1.1.0
@@ -10,5 +10,5 @@ require (
 
 require (
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
-	golang.org/x/image v0.25.0 // indirect
+	golang.org/x/image v0.31.0 // indirect
 )
